@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Subscriptions Leak</string>
+    <string name="error_loading_suggested_movie">Could not load a movie\'s title</string>
+    <string name="loading">Please wait...</string>
+</resources>
