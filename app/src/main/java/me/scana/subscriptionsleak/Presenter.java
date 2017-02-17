@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 interface Presenter {
     void setView(@NonNull MovieSuggestionView view);
 
+    void present();
+
     void onViewTapped();
 
     void destroy();

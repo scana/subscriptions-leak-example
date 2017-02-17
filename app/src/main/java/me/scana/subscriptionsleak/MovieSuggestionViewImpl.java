@@ -38,6 +38,7 @@ public class MovieSuggestionViewImpl extends FrameLayout implements MovieSuggest
         NonConfigurationComponent injector = (NonConfigurationComponent) getContext().getSystemService(NonConfigurationComponent.NAME);
         injector.inject(this);
         presenter.setView(this);
+        presenter.present();
     }
 
     @Override

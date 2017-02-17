@@ -26,7 +26,11 @@ public class LeakingPresenter implements Presenter {
     @Override
     public void setView(@NonNull MovieSuggestionView view) {
         this.view = view;
-        showRecommendedMovieTitle(this.view);
+    }
+
+    @Override
+    public void present() {
+        showRecommendedMovieTitle(view);
     }
 
     private void showRecommendedMovieTitle(final MovieSuggestionView view) {
