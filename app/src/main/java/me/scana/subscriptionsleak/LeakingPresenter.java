@@ -2,12 +2,14 @@ package me.scana.subscriptionsleak;
 
 import androidx.annotation.NonNull;
 
+import org.reactivestreams.Subscription;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import me.scana.subscriptionsleak.di.NonConfigurationScope;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.Subscriptions;
 
 
 @NonConfigurationScope
@@ -15,7 +17,7 @@ public class LeakingPresenter implements Presenter {
 
     private final RecommendMovieUseCase recommendMovieUseCase;
 
-    private Subscription subscription = Subscriptions.empty();
+    private Disposable disposable = Disposables.empty();
     private MovieSuggestionView view;
     private boolean didUserTapTitle;
 
@@ -35,18 +37,18 @@ public class LeakingPresenter implements Presenter {
 
     private void showRecommendedMovieTitle(final MovieSuggestionView view) {
         view.showProgress();
-        subscription = recommendMovieUseCase.recommendRandomMovie()
+        disposable = recommendMovieUseCase.recommendRandomMovie()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
+                .subscribe(new Consumer<String>() {
                     @Override
-                    public void call(String movieTitle) {
+                    public void accept(String movieTitle) {
                         view.hideProgress();
                         view.showTitle(movieTitle);
                     }
-                }, new Action1<Throwable>() {
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void call(Throwable throwable) {
+                    public void accept(Throwable throwable) {
                         view.hideProgress();
                         view.showLoadingError();
                     }
@@ -60,7 +62,7 @@ public class LeakingPresenter implements Presenter {
 
     @Override
     public void destroy() {
-        subscription.unsubscribe();
+        disposable.dispose();
         view = null;
     }
 

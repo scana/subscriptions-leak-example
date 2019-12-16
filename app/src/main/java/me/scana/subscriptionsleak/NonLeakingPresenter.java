@@ -2,12 +2,12 @@ package me.scana.subscriptionsleak;
 
 import androidx.annotation.NonNull;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import me.scana.subscriptionsleak.di.NonConfigurationScope;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 
 @NonConfigurationScope
@@ -15,7 +15,7 @@ public class NonLeakingPresenter implements Presenter {
 
     private final RecommendMovieUseCase recommendMovieUseCase;
 
-    private CompositeSubscription compositeSubscription = new CompositeSubscription();
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private MovieSuggestionView view;
     private boolean didUserTapTitle;
 
@@ -35,23 +35,23 @@ public class NonLeakingPresenter implements Presenter {
 
     private void showRecommendedMovieTitle(final MovieSuggestionView view) {
         view.showProgress();
-        Subscription subscription = recommendMovieUseCase.recommendRandomMovie()
+        Disposable disposable = recommendMovieUseCase.recommendRandomMovie()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
+                .subscribe(new Consumer<String>() {
                     @Override
-                    public void call(String movieTitle) {
+                    public void accept(String movieTitle) {
                         view.hideProgress();
                         view.showTitle(movieTitle);
                     }
-                }, new Action1<Throwable>() {
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void call(Throwable throwable) {
+                    public void accept(Throwable throwable) {
                         view.hideProgress();
                         view.showLoadingError();
                     }
                 });
-        compositeSubscription.add(subscription);
+        compositeDisposable.add(disposable);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class NonLeakingPresenter implements Presenter {
 
     @Override
     public void destroy() {
-        compositeSubscription.clear();
+        compositeDisposable.clear();
         view = null;
     }
 
