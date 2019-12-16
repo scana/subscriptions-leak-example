@@ -2,7 +2,7 @@ package me.scana.subscriptionsleak;
 
 import android.support.annotation.NonNull;
 
-interface Presenter {
+public interface Presenter {
     void setView(@NonNull MovieSuggestionView view);
 
     void present();
