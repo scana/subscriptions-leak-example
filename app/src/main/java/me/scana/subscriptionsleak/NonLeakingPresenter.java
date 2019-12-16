@@ -1,6 +1,6 @@
 package me.scana.subscriptionsleak;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import me.scana.subscriptionsleak.di.NonConfigurationScope;
 import rx.Subscription;
