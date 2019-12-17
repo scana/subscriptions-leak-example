@@ -2,8 +2,6 @@ package me.scana.subscriptionsleak;
 
 import androidx.annotation.NonNull;
 
-import org.reactivestreams.Subscription;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
@@ -65,5 +63,4 @@ public class LeakingPresenter implements Presenter {
         disposable.dispose();
         view = null;
     }
-
 }
